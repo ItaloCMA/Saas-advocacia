@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #F8FAFC;
+    color: #0F172A;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.45) #F1F5F9;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #F1F5F9;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.5);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(180, 83, 9, 0.55);
+  }
+}
+
+.font-serif-luxury {
+  font-family: 'Cinzel', 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+}
+
+/* Luxury Clara + SaaS Limpo: acentos dourados contidos e sofisticados */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #0F172A 0%, #78350F 45%, #B45309 85%, #92400E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+}
+
+.bg-luxury-cta {
+  background-color: #0F172A;
+  color: #FFFFFF;
+}
+
+.bg-luxury-cta:hover {
+  background-color: #1E293B;
+}
+
+.border-gold-subtle {
+  border-color: rgba(217, 119, 6, 0.22);
+}
+
+.saas-card {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+}
+
+.saas-card-hover:hover {
+  border-color: rgba(217, 119, 6, 0.45);
+  box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.08);
+}

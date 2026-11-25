@@ -78,6 +78,7 @@ export default function App() {
   const [cases, setCases] = useState(() => loadLocal('lexflow_cases', []));
   const [deadlines, setDeadlines] = useState(() => loadLocal('lexflow_deadlines', []));
   const [documents, setDocuments] = useState(() => loadLocal('lexflow_documents', []));
+  const [templates, setTemplates] = useState(() => loadLocal('lexflow_templates', []));
 
   // Configurações
   const [webhookUrl, setWebhookUrl] = useState(() => {
@@ -197,6 +198,7 @@ export default function App() {
     const casesRef = collection(db, 'artifacts', appId, 'public', 'data', 'cases');
     const deadlinesRef = collection(db, 'artifacts', appId, 'public', 'data', 'deadlines');
     const documentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
+    const templatesRef = collection(db, 'artifacts', appId, 'public', 'data', 'templates');
     const settingsRef = collection(db, 'artifacts', appId, 'public', 'data', 'settings');
 
     const unsubClients = onSnapshot(
@@ -247,6 +249,17 @@ export default function App() {
       (err) => console.warn('Erro ao ler documentos do Firestore:', err)
     );
 
+    const unsubTemplates = onSnapshot(
+      templatesRef,
+      (snapshot) => {
+        const list = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }));
+        list.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        setTemplates(list);
+        saveLocal('lexflow_templates', list);
+      },
+      (err) => console.warn('Erro ao ler modelos do Firestore:', err)
+    );
+
     const unsubSettings = onSnapshot(
       settingsRef,
       (snapshot) => {
@@ -267,6 +280,7 @@ export default function App() {
       unsubCases();
       unsubDeadlines();
       unsubDocuments();
+      unsubTemplates();
       unsubSettings();
     };
   }, [user, isLocalMode]);
@@ -282,6 +296,10 @@ export default function App() {
     saveLocal('lexflow_documents', documents);
   }, [documents]);
 
+  useEffect(() => {
+    saveLocal('lexflow_templates', templates);
+  }, [templates]);
+
   // Sincronização opcional com servidor local C#/Vite quando ativo
   const lastKnownServerUpdateRef = useRef(null);
 
@@ -293,6 +311,7 @@ export default function App() {
         cases: overrides.cases !== undefined ? overrides.cases : cases,
         deadlines: overrides.deadlines !== undefined ? overrides.deadlines : deadlines,
         documents: overrides.documents !== undefined ? overrides.documents : documents,
+        templates: overrides.templates !== undefined ? overrides.templates : templates,
         settings:
           overrides.settings !== undefined
             ? overrides.settings
@@ -788,6 +807,38 @@ export default function App() {
       }
     }
     showToast('Documento removido.');
+  };
+
+  const handleAddTemplate = async (newTemplate) => {
+    const updated = [newTemplate, ...templates];
+    setTemplates(updated);
+    saveLocal('lexflow_templates', updated);
+    pushServerUpdate({ templates: updated });
+    if (db && !isLocalMode && newTemplate?.id) {
+      try {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'templates', newTemplate.id);
+        await setDoc(ref, newTemplate);
+      } catch (err) {
+        console.error('Erro ao salvar modelo no Firestore:', err);
+      }
+    }
+  };
+
+  const handleDeleteTemplate = async (templateId) => {
+    await deleteFileFromIndexedDB(templateId);
+    const updated = templates.filter((t) => t.id !== templateId);
+    setTemplates(updated);
+    saveLocal('lexflow_templates', updated);
+    pushServerUpdate({ templates: updated });
+    if (db && !isLocalMode) {
+      try {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'templates', templateId);
+        await deleteDoc(ref);
+      } catch (err) {
+        console.error('Erro ao excluir modelo no Firestore:', err);
+      }
+    }
+    showToast('Modelo removido.');
   };
 
   // Confirmação unificada (Exclusões e Ações Críticas como Restauração de Backup)
@@ -1401,9 +1452,16 @@ export default function App() {
         isOpen={templatesModalOpen}
         onClose={() => setTemplatesModalOpen(false)}
         hasNativeServer={hasNativeServer}
+        clients={clients}
+        cases={cases}
+        documents={documents}
+        templates={templates}
+        onAddTemplate={handleAddTemplate}
+        onDeleteTemplate={handleDeleteTemplate}
         modelsDriveUrl={modelsDriveUrl}
         setModelsDriveUrl={setModelsDriveUrl}
         onSaveModelsUrl={handleSaveModelsUrl}
+        onCopyText={copyToClipboard}
         showToast={showToast}
       />
     </div>

@@ -6,7 +6,9 @@ import {
   Briefcase,
   Calendar,
   Cloud,
-  FolderOpen
+  FolderOpen,
+  FileText,
+  BookOpen
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -14,17 +16,22 @@ export default function Sidebar({
   setActiveTab,
   clientsCount,
   casesCount,
+  templatesCount = 0,
   overdueOrTodayCount,
   isLocalMode,
-  hasNativeServer,
-  onOpenTemplatesModal
+  hasNativeServer
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Visão Executiva', mobileLabel: 'Painel', icon: LayoutDashboard },
     { id: 'clients', label: 'Clientes (CRM)', mobileLabel: 'Clientes', icon: Users, count: clientsCount },
     { id: 'cases', label: 'Processos', mobileLabel: 'Processos', icon: Briefcase, count: casesCount },
-    { id: 'deadlines', label: 'Prazos & Agenda', mobileLabel: 'Prazos', icon: Calendar, urgentCount: overdueOrTodayCount },
-    { id: 'deploy', label: 'Cloud & Agenda', mobileLabel: 'Config', icon: Cloud, isDeploy: true }
+    { id: 'deadlines', label: 'Prazos & Agenda', mobileLabel: 'Prazos', icon: Calendar, urgentCount: overdueOrTodayCount }
+  ];
+
+  const acervoItems = [
+    { id: 'acervo-clientes', label: 'Dados & Docs Clientes', icon: FileText },
+    { id: 'acervo-modelos', label: 'Modelos de Peças', icon: BookOpen, count: templatesCount },
+    { id: 'acervo-pastas', label: 'Pastas (Nuvem & PC)', icon: FolderOpen }
   ];
 
   const statusText = !isLocalMode
@@ -32,6 +39,47 @@ export default function Sidebar({
     : hasNativeServer
     ? 'Servidor Híbrido Ativo'
     : 'Modo Web • Cache Seguro';
+
+  const renderNavButton = (item) => {
+    const Icon = item.icon;
+    const isActive = activeTab === item.id;
+
+    return (
+      <button
+        key={item.id}
+        type="button"
+        onClick={() => setActiveTab(item.id)}
+        className={`relative w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer active:scale-[0.99] ${
+          isActive
+            ? 'bg-amber-50/90 text-slate-950 font-semibold border border-amber-200/80 shadow-2xs'
+            : 'text-slate-600 font-medium hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+        }`}
+      >
+        {isActive && <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-amber-600" />}
+
+        <div className="flex items-center gap-3 min-w-0">
+          <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-700' : 'text-slate-400'}`} />
+          <span className="truncate">{item.label}</span>
+        </div>
+
+        {item.count !== undefined && (
+          <span
+            className={`text-[11px] px-2 py-0.5 rounded-full font-semibold shrink-0 ${
+              isActive ? 'bg-white text-amber-900 border border-amber-200' : 'bg-slate-100 text-slate-600'
+            }`}
+          >
+            {item.count}
+          </span>
+        )}
+
+        {item.urgentCount > 0 && (
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold shadow-2xs shrink-0">
+            {item.urgentCount}
+          </span>
+        )}
+      </button>
+    );
+  };
 
   return (
     <>
@@ -51,12 +99,16 @@ export default function Sidebar({
 
         <button
           type="button"
-          onClick={onOpenTemplatesModal}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-amber-50 hover:text-amber-900 border border-slate-200 transition-all active:scale-95 cursor-pointer"
-          title="Abrir Central de Modelos de Peças"
+          onClick={() => setActiveTab('acervo-modelos')}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95 cursor-pointer ${
+            activeTab.startsWith('acervo-')
+              ? 'bg-amber-50 text-amber-900 border-amber-300'
+              : 'text-slate-700 bg-slate-50 hover:bg-amber-50 border-slate-200'
+          }`}
+          title="Abrir Acervo e Modelos de Peças"
         >
-          <FolderOpen className="w-3.5 h-3.5 text-amber-600" />
-          <span>Modelos</span>
+          <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+          <span>Acervo</span>
         </button>
       </div>
 
@@ -86,77 +138,15 @@ export default function Sidebar({
             Escritório
           </p>
 
-          {navItems
-            .filter((item) => !item.isDeploy)
-            .map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveTab(item.id)}
-                  className={`relative w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer active:scale-[0.99] ${
-                    isActive
-                      ? 'bg-amber-50/90 text-slate-950 font-semibold border border-amber-200/80 shadow-2xs'
-                      : 'text-slate-600 font-medium hover:text-slate-900 hover:bg-slate-50 border border-transparent'
-                  }`}
-                >
-                  {isActive && (
-                    <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-amber-600" />
-                  )}
-
-                  <div className="flex items-center gap-3">
-                    <Icon
-                      className={`w-4 h-4 shrink-0 ${
-                        isActive ? 'text-amber-700' : 'text-slate-400'
-                      }`}
-                    />
-                    <span>{item.label}</span>
-                  </div>
-
-                  {item.count !== undefined && (
-                    <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
-                        isActive
-                          ? 'bg-white text-amber-900 border border-amber-200'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {item.count}
-                    </span>
-                  )}
-
-                  {item.urgentCount > 0 && (
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold shadow-2xs">
-                      {item.urgentCount}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+          {navItems.map(renderNavButton)}
 
           <div className="my-3 border-t border-slate-100" />
 
-          <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Acervo
           </p>
 
-          <button
-            type="button"
-            onClick={onOpenTemplatesModal}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 bg-slate-50/80 hover:bg-amber-50/70 border border-slate-200/80 hover:border-amber-200 transition-all group cursor-pointer active:scale-[0.99]"
-            title="Abrir Central de Modelos de Peças"
-          >
-            <div className="flex items-center gap-2.5">
-              <FolderOpen className="w-4 h-4 text-amber-600 shrink-0" />
-              <span className="truncate">Modelos de Peças</span>
-            </div>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white text-slate-600 border border-slate-200 font-semibold">
-              Acervo
-            </span>
-          </button>
+          {acervoItems.map(renderNavButton)}
         </nav>
 
         {/* Card Inferior: Cloud, Agenda & Backup */}
@@ -212,7 +202,7 @@ export default function Sidebar({
         aria-label="Navegação móvel"
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-xl"
       >
-        {navItems.map((item) => {
+        {[...navItems, { id: 'deploy', mobileLabel: 'Config', icon: Cloud }].map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
 

@@ -46,6 +46,7 @@ import CaseTimelineModal from './components/cases/CaseTimelineModal';
 import DeadlinesTab from './components/deadlines/DeadlinesTab';
 import DeadlineModal from './components/deadlines/DeadlineModal';
 import DeployTab from './components/deploy/DeployTab';
+import AcervoView from './components/acervo/AcervoView';
 
 const loadLocal = (key, fallback = []) => {
   try {
@@ -1185,10 +1186,10 @@ export default function App() {
         setActiveTab={setActiveTab}
         clientsCount={clients.length}
         casesCount={cases.length}
+        templatesCount={templates.length}
         overdueOrTodayCount={stats.overdueOrToday}
         isLocalMode={isLocalMode}
         hasNativeServer={hasNativeServer}
-        onOpenTemplatesModal={() => setTemplatesModalOpen(true)}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -1375,6 +1376,25 @@ export default function App() {
               onImportBackupJSON={handleImportBackup}
               onRequestConfirm={setDeleteConfirm}
               copyToClipboard={copyToClipboard}
+              showToast={showToast}
+            />
+          )}
+
+          {activeTab.startsWith('acervo-') && (
+            <AcervoView
+              section={activeTab}
+              onChangeSection={setActiveTab}
+              hasNativeServer={hasNativeServer}
+              clients={clients}
+              cases={cases}
+              documents={documents}
+              templates={templates}
+              onAddTemplate={handleAddTemplate}
+              onDeleteTemplate={handleDeleteTemplate}
+              modelsDriveUrl={modelsDriveUrl}
+              setModelsDriveUrl={setModelsDriveUrl}
+              onSaveModelsUrl={handleSaveModelsUrl}
+              onCopyText={copyToClipboard}
               showToast={showToast}
             />
           )}

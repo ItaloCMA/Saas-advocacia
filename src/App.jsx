@@ -1204,6 +1204,11 @@ export default function App() {
           isLocalMode={isLocalMode}
           hasNativeServer={hasNativeServer}
           authLoading={authLoading}
+          currentUser={{
+            displayName: user?.displayName || 'Silvia Mayra',
+            email: user?.email || 'silviamayra@advocacia.com.br'
+          }}
+          onSignOut={() => showToast('Sessão de apresentação ativa.', 'info')}
           onOpenNewClient={() => {
             setEditingClient(null);
             setClientModalOpen(true);

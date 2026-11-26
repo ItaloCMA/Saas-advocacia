@@ -17,11 +17,11 @@ export default function ClientCard({
     <div className="bg-white rounded-2xl border border-slate-200/80 hover:border-amber-300 shadow-2xs hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4">
       <div className="space-y-3.5">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="w-10 h-10 rounded-full bg-slate-900 text-amber-400 text-xs font-bold flex items-center justify-center shrink-0 ring-1 ring-amber-400/20">
               {getInitials(client.name)}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <span
                 className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-1 border ${
                   client.status === 'Ativo'

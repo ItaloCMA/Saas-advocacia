@@ -252,6 +252,9 @@ export const getNetworkServerInfo = async () => {
 
 // Testa se a API nativa do LexFlow (C# ou Vite) está respondendo
 export const checkNativeApi = async () => {
+  if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+    return false;
+  }
   try {
     const res = await fetch('/api/ping', { method: 'GET', signal: AbortSignal.timeout(1200) });
     if (res.ok) {

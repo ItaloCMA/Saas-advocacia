@@ -11,8 +11,10 @@ import {
   Bell,
   Cloud,
   AlertTriangle,
-  Clock
+  Clock,
+  LogOut
 } from 'lucide-react';
+import { getInitials } from '../../utils/formatters';
 
 export default function Topbar({
   globalSearch,
@@ -25,6 +27,8 @@ export default function Topbar({
   isLocalMode,
   hasNativeServer,
   authLoading,
+  currentUser,
+  onSignOut,
   onOpenNewClient,
   onOpenNewCase,
   onOpenNewDeadline
@@ -40,7 +44,10 @@ export default function Topbar({
     (d) => d.computedStatus?.isOverdue || d.computedStatus?.isToday
   );
 
-  // Atalho global Ctrl+K / Cmd+K e clique fora para fechar popovers
+  const userName = currentUser?.displayName || 'Silvia Mayra';
+  const userEmail = currentUser?.email || 'silviamayra@advocacia.com.br';
+  const userInitial = getInitials(userName).slice(0, 1);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -197,8 +204,8 @@ export default function Topbar({
         )}
       </div>
 
-      {/* Ações SaaS Limpas */}
-      <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
+      {/* Ações SaaS Limpas + Usuário Logado */}
+      <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-2.5 shrink-0">
         {/* Status de Conexão Online */}
         <button
           type="button"
@@ -208,11 +215,11 @@ export default function Topbar({
         >
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              authLoading ? 'bg-amber-400 animate-pulse' : !isLocalMode ? 'bg-emerald-500' : 'bg-amber-500'
+              authLoading ? 'bg-amber-400 animate-pulse' : 'bg-emerald-500'
             }`}
           />
           <Cloud className="w-3.5 h-3.5 text-slate-400" />
-          <span>{!isLocalMode ? 'Nuvem Online' : hasNativeServer ? 'Híbrido Local' : 'Modo Web'}</span>
+          <span>{!isLocalMode ? 'Nuvem Online' : hasNativeServer ? 'Híbrido Local' : 'Nuvem Online'}</span>
         </button>
 
         {/* Sino de Alertas de Prazos */}
@@ -285,7 +292,7 @@ export default function Topbar({
           )}
         </div>
 
-        {/* Botão Compacto + Novo (Dropdown SaaS) */}
+        {/* Botão Compacto + Novo */}
         <div className="relative" ref={newMenuRef}>
           <button
             type="button"
@@ -330,10 +337,30 @@ export default function Topbar({
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <UserPlus className="w-4 h-4 text-slate-600" />
-                <span>Novo Cliente (CRM)</span>
+                <span>Novo Cliente</span>
               </button>
             </div>
           )}
+        </div>
+
+        {/* Perfil do Usuário Logado + Sair */}
+        <div className="hidden md:flex items-center gap-2.5 pl-3 ml-1 border-l border-slate-200/80">
+          <div className="w-8 h-8 rounded-full bg-slate-900 text-amber-400 text-xs font-bold flex items-center justify-center shrink-0 ring-1 ring-amber-400/20">
+            {userInitial}
+          </div>
+          <div className="min-w-0 leading-tight max-w-[140px]">
+            <p className="text-xs font-bold text-slate-800 truncate">{userName}</p>
+            <p className="text-[10px] text-slate-400 truncate">{userEmail}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            title="Sair da conta"
+            aria-label="Sair da conta"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>

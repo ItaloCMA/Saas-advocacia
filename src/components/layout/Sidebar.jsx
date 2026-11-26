@@ -23,7 +23,7 @@ export default function Sidebar({
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Visão Executiva', mobileLabel: 'Painel', icon: LayoutDashboard },
-    { id: 'clients', label: 'Clientes (CRM)', mobileLabel: 'Clientes', icon: Users, count: clientsCount },
+    { id: 'clients', label: 'Clientes', mobileLabel: 'Clientes', icon: Users, count: clientsCount },
     { id: 'cases', label: 'Processos', mobileLabel: 'Processos', icon: Briefcase, count: casesCount },
     { id: 'deadlines', label: 'Prazos & Agenda', mobileLabel: 'Prazos', icon: Calendar, urgentCount: overdueOrTodayCount }
   ];
@@ -38,7 +38,7 @@ export default function Sidebar({
     ? 'Nuvem Ativa • Tempo Real'
     : hasNativeServer
     ? 'Servidor Híbrido Ativo'
-    : 'Modo Web • Cache Seguro';
+    : 'Nuvem Ativa • Tempo Real';
 
   const renderNavButton = (item) => {
     const Icon = item.icon;
@@ -89,12 +89,12 @@ export default function Sidebar({
           <div className="w-8 h-8 rounded-lg bg-slate-900 text-amber-400 ring-1 ring-amber-400/30 flex items-center justify-center shadow-xs">
             <Scale className="w-4 h-4 stroke-[2]" />
           </div>
-          <h1 className="font-serif-luxury font-bold text-sm leading-none tracking-wide text-slate-900 flex items-center gap-1.5">
-            LexFlow
-            <span className="text-[9px] font-sans font-bold tracking-widest uppercase px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
-              PRO
-            </span>
-          </h1>
+          <div className="min-w-0">
+            <h1 className="font-serif-luxury font-bold text-sm leading-none tracking-wide text-slate-900 truncate">
+              SILVIA MAYRA
+            </h1>
+            <p className="text-[10px] text-slate-400 font-medium leading-none mt-0.5">Advocacia</p>
+          </div>
         </div>
 
         <button
@@ -120,14 +120,11 @@ export default function Sidebar({
             <Scale className="w-4 h-4 stroke-[2]" />
           </div>
           <div className="min-w-0">
-            <h1 className="font-serif-luxury font-bold text-base leading-none tracking-wider text-slate-900 flex items-center gap-1.5">
-              LexFlow
-              <span className="text-[9px] font-sans font-bold tracking-widest uppercase px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
-                PRO
-              </span>
+            <h1 className="font-serif-luxury font-bold text-base leading-none tracking-wider text-slate-900 truncate">
+              SILVIA MAYRA
             </h1>
             <p className="text-[11px] text-slate-400 font-medium tracking-wide mt-1 truncate">
-              Gestão Jurídica Online
+              Advocacia
             </p>
           </div>
         </div>

@@ -25,7 +25,7 @@ export default function DashboardTab({
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
               <span>Ambiente Jurídico Pronto</span>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 font-serif-luxury">Bem-vindo ao LexFlow PRO</h3>
+            <h3 className="text-lg font-bold text-slate-900 font-serif-luxury">BEM-VINDO</h3>
             <p className="text-sm text-slate-500 max-w-2xl leading-relaxed">
               Comece cadastrando seus clientes e processos reais ou carregue um conjunto de dados fictícios para explorar o fluxo completo de prazos, documentos e agenda.
             </p>
